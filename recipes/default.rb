@@ -15,9 +15,14 @@ elasticsearch_configure 'elasticsearch'
 elasticsearch_service 'elasticsearch'
 elasticsearch_plugin 'x-pack'
 
-logstash_instance 'logstash'
+#logstash_instance 'logstash'
 logstash_service 'logstash'
-logstash_config 'logstash' do
-  action :create
+logstash_input 'udp5000' do
+  notifies :restart, 'logstash_service[logstash]'
+end
+logstash_filter 'access_events' do
+  notifies :restart, 'logstash_service[logstash]'
+end
+logstash_output 'elasticsearch' do
   notifies :restart, 'logstash_service[logstash]'
 end
