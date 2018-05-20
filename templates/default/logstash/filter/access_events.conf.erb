@@ -1,0 +1,41 @@
+filter {
+  if [message] =~ "Access Event: " {
+    grok {
+      match => {
+        "message"  => "%{DATESTAMP:timestamp} %{GREEDYDATA:msg}"
+      }
+    }
+
+    date {
+      match        => [ "timestamp", "YY/MM/dd HH:mm:ss" ]
+      target       => "@timestamp"
+      remove_field => ["timestamp"]
+      timezone     => "UTC"
+    }
+
+    grok {
+      match => {
+        "msg"      => "Access Event: %{GREEDYDATA:access_event}\}"
+      }
+    }
+
+    mutate {
+      replace      => { "access_event" => "%{access_event}}" }
+    }
+
+    json {
+      source       => "access_event"
+      target       => "access_event"
+    }
+
+    date {
+      match        => [ "[access_event][ts]", "YY-MM-dd HH:mm:ss" ]
+      target       => "[access_event][ts]"
+      timezone     => "UTC"
+    }
+
+    mutate {
+      remove_field => [ "msg" ]
+    }
+  }
+}
