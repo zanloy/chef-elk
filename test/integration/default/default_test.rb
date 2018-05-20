@@ -6,14 +6,25 @@
 # found at http://inspec.io/docs/reference/resources/
 
 # Java tests
+describe file('/usr/bin/java') do
+  it { should exist }
+end
 
 # Elasticsearch tests
-destribe port('0.0.0.0', 9200) do
+describe processes('/bin/java') do
+  its('users') { should eq ['elasticsearch'] }
+end
+
+describe port('0.0.0.0', 9200) do
   it { should_not be_listening }
 end
 
 describe port('127.0.0.1', 9200) do
   it { should be_listening }
+end
+
+describe elasticsearch do
+  its('module_list.first') { should include 'x-pack' }
 end
 
 # Logstash tests

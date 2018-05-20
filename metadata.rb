@@ -19,5 +19,6 @@ chef_version '>= 12.14' if respond_to?(:chef_version)
 #
 # source_url 'https://github.com/<insert_org_here>/elk'
 
-depends 'elasticsearch'
 depends 'java'
+depends 'elasticsearch'
+depends 'simple-logstash'
